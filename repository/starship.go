@@ -7,14 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *repository) GetStarshipList(ctx context.Context, selectQuery string) ([]entity.Starship, error) {
+func (r *repository) GetStarshipList(ctx context.Context, selectQuery string) ([]*entity.Starship, error) {
 	r.log.Trace("Enter: repository GetStarshipList")
 
 	if ctx.Err() == context.DeadlineExceeded {
 		return nil, ctx.Err()
 	}
 
-	var starshipList []entity.Starship
+	var starshipList []*entity.Starship
 	errDb := r.db.
 		Select(selectQuery).
 		Model(&entity.Vehicle{}).
@@ -22,7 +22,7 @@ func (r *repository) GetStarshipList(ctx context.Context, selectQuery string) ([
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting starship list")
+		r.log.Error("database error when getting starship list")
 		return nil, errDb
 	}
 
@@ -50,7 +50,7 @@ func (r *repository) GetStarshipById(ctx context.Context, starshipId int, select
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting starship data")
+		r.log.Error("database error when getting starship data")
 		return nil, errDb
 	}
 

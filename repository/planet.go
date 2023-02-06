@@ -7,14 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *repository) GetPlanetList(ctx context.Context, selectQuery string) ([]entity.Planet, error) {
+func (r *repository) GetPlanetList(ctx context.Context, selectQuery string) ([]*entity.Planet, error) {
 	r.log.Trace("Enter: repository GetPlanetList")
 
 	if ctx.Err() == context.DeadlineExceeded {
 		return nil, ctx.Err()
 	}
 
-	var planetList []entity.Planet
+	var planetList []*entity.Planet
 	errDb := r.db.
 		Select(selectQuery).
 		Model(&entity.Planet{}).
@@ -22,7 +22,7 @@ func (r *repository) GetPlanetList(ctx context.Context, selectQuery string) ([]e
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting planet list")
+		r.log.Error("database error when getting planet list")
 		return nil, errDb
 	}
 
@@ -50,9 +50,37 @@ func (r *repository) GetPlanetById(ctx context.Context, planetId int, selectQuer
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting planet data")
+		r.log.Error("database error when getting planet data")
 		return nil, errDb
 	}
 
 	return &planet, nil
+}
+
+func (r *repository) GetPlanetListByIds(ctx context.Context, planetIds []int, selectQuery string) ([]*entity.Planet, error) {
+
+	r.log.Trace("Enter: repository GetPlanetListByIds")
+
+	if ctx.Err() == context.DeadlineExceeded {
+		return nil, ctx.Err()
+	}
+
+	var planetList []*entity.Planet
+	errDb := r.db.
+		Select(selectQuery).
+		Model(&entity.Planet{}).
+		Where("id IN (?)", planetIds).
+		Scan(&planetList).
+		Error
+
+	if errDb != nil {
+		r.log.Error("database error when getting planet data")
+		return nil, errDb
+	}
+
+	if len(planetList) == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	return planetList, nil
 }

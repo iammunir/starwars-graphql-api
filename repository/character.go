@@ -7,14 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *repository) GetCharacterList(ctx context.Context, selectQuery string) ([]entity.Character, error) {
+func (r *repository) GetCharacterList(ctx context.Context, selectQuery string) ([]*entity.Character, error) {
 	r.log.Trace("Enter: repository GetCharacterList")
 
 	if ctx.Err() == context.DeadlineExceeded {
 		return nil, ctx.Err()
 	}
 
-	var characterList []entity.Character
+	var characterList []*entity.Character
 	errDb := r.db.
 		Select(selectQuery).
 		Model(&entity.Character{}).
@@ -22,7 +22,7 @@ func (r *repository) GetCharacterList(ctx context.Context, selectQuery string) (
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting character list")
+		r.log.Error("database error when getting character list")
 		return nil, errDb
 	}
 
@@ -50,21 +50,21 @@ func (r *repository) GetCharacterById(ctx context.Context, characterId int, sele
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting character data")
+		r.log.Error("database error when getting character data")
 		return nil, errDb
 	}
 
 	return &character, nil
 }
 
-func (r *repository) GetCharacterListByPlanetIds(ctx context.Context, planetIds []int, selectQuery string) ([]entity.Character, error) {
+func (r *repository) GetCharacterListByPlanetIds(ctx context.Context, planetIds []int, selectQuery string) ([]*entity.Character, error) {
 	r.log.Trace("Enter: repository GetCharacterListByPlanetIds")
 
 	if ctx.Err() == context.DeadlineExceeded {
 		return nil, ctx.Err()
 	}
 
-	var characterList []entity.Character
+	var characterList []*entity.Character
 	errDb := r.db.
 		Select(selectQuery).
 		Model(&entity.Character{}).
@@ -73,7 +73,7 @@ func (r *repository) GetCharacterListByPlanetIds(ctx context.Context, planetIds 
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting character list by planet ids")
+		r.log.Error("database error when getting character list by planet ids")
 		return nil, errDb
 	}
 
@@ -84,14 +84,14 @@ func (r *repository) GetCharacterListByPlanetIds(ctx context.Context, planetIds 
 	return characterList, nil
 }
 
-func (r *repository) GetCharacterListBySpeciesIds(ctx context.Context, speciesIds []int, selectQuery string) ([]entity.Character, error) {
+func (r *repository) GetCharacterListBySpeciesIds(ctx context.Context, speciesIds []int, selectQuery string) ([]*entity.Character, error) {
 	r.log.Trace("Enter: repository GetCharacterListBySpeciesIds")
 
 	if ctx.Err() == context.DeadlineExceeded {
 		return nil, ctx.Err()
 	}
 
-	var characterList []entity.Character
+	var characterList []*entity.Character
 	errDb := r.db.
 		Select(selectQuery).
 		Model(&entity.Character{}).
@@ -100,7 +100,7 @@ func (r *repository) GetCharacterListBySpeciesIds(ctx context.Context, speciesId
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting character list by species ids")
+		r.log.Error("database error when getting character list by species ids")
 		return nil, errDb
 	}
 

@@ -7,14 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *repository) GetVehicleList(ctx context.Context, selectQuery string) ([]entity.Vehicle, error) {
+func (r *repository) GetVehicleList(ctx context.Context, selectQuery string) ([]*entity.Vehicle, error) {
 	r.log.Trace("Enter: repository GetVehicleList")
 
 	if ctx.Err() == context.DeadlineExceeded {
 		return nil, ctx.Err()
 	}
 
-	var vehicleList []entity.Vehicle
+	var vehicleList []*entity.Vehicle
 	errDb := r.db.
 		Select(selectQuery).
 		Model(&entity.Vehicle{}).
@@ -22,7 +22,7 @@ func (r *repository) GetVehicleList(ctx context.Context, selectQuery string) ([]
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting vehicle list")
+		r.log.Error("database error when getting vehicle list")
 		return nil, errDb
 	}
 
@@ -50,7 +50,7 @@ func (r *repository) GetVehicleById(ctx context.Context, vehicleId int, selectQu
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting vehicle data")
+		r.log.Error("database error when getting vehicle data")
 		return nil, errDb
 	}
 

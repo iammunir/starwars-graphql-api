@@ -2,6 +2,7 @@ package schema
 
 import (
 	"github.com/graphql-go/graphql"
+	"github.com/iammunir/starwars-graphql-api/graphql/resolver"
 	"github.com/iammunir/starwars-graphql-api/graphql/types"
 )
 
@@ -9,7 +10,7 @@ var RootQuery = graphql.NewObject(
 	graphql.ObjectConfig{
 		Name: "RootQuery",
 		Fields: graphql.Fields{
-			"Vehicle": &graphql.Field{
+			"vehicle": &graphql.Field{
 				Type:        types.VehicleType,
 				Description: "Get Vehicle by ID",
 				Args: graphql.FieldConfigArgument{
@@ -17,14 +18,14 @@ var RootQuery = graphql.NewObject(
 						Type: graphql.NewNonNull(graphql.Int),
 					},
 				},
-				// Resolve: ,
+				Resolve: resolver.VehicleResolver,
 			},
-			"Vehicles": &graphql.Field{
+			"vehicles": &graphql.Field{
 				Type:        graphql.NewList(types.VehicleType),
 				Description: "Get Vehicle List",
 				// Resolve: ,
 			},
-			"Starship": &graphql.Field{
+			"starship": &graphql.Field{
 				Type:        types.StarshipType,
 				Description: "Get Starship by ID",
 				Args: graphql.FieldConfigArgument{
@@ -34,12 +35,12 @@ var RootQuery = graphql.NewObject(
 				},
 				// Resolve: ,
 			},
-			"Starships": &graphql.Field{
+			"starships": &graphql.Field{
 				Type:        graphql.NewList(types.StarshipType),
 				Description: "Get Starship List",
 				// Resolve: ,
 			},
-			"Species": &graphql.Field{
+			"species": &graphql.Field{
 				Type:        types.SpeciesType,
 				Description: "Get Species by ID",
 				Args: graphql.FieldConfigArgument{
@@ -47,14 +48,14 @@ var RootQuery = graphql.NewObject(
 						Type: graphql.NewNonNull(graphql.Int),
 					},
 				},
-				// Resolve: ,
+				Resolve: resolver.SpeciesResolver,
 			},
-			"SpeciesList": &graphql.Field{
+			"speciesList": &graphql.Field{
 				Type:        graphql.NewList(types.SpeciesType),
 				Description: "Get Species List",
-				// Resolve: ,
+				Resolve:     resolver.SpeciesListResolver,
 			},
-			"Planet": &graphql.Field{
+			"planet": &graphql.Field{
 				Type:        types.PlanetType,
 				Description: "Get Planet by ID",
 				Args: graphql.FieldConfigArgument{
@@ -62,14 +63,14 @@ var RootQuery = graphql.NewObject(
 						Type: graphql.NewNonNull(graphql.Int),
 					},
 				},
-				// Resolve: ,
+				Resolve: resolver.PlanetResolver,
 			},
-			"Planets": &graphql.Field{
+			"planets": &graphql.Field{
 				Type:        graphql.NewList(types.PlanetType),
 				Description: "Get Planet List",
-				// Resolve: ,
+				Resolve:     resolver.PlanetListResolver,
 			},
-			"Character": &graphql.Field{
+			"character": &graphql.Field{
 				Type:        types.CharacterType,
 				Description: "Get Character by ID",
 				Args: graphql.FieldConfigArgument{
@@ -79,7 +80,7 @@ var RootQuery = graphql.NewObject(
 				},
 				// Resolve: ,
 			},
-			"Characters": &graphql.Field{
+			"characters": &graphql.Field{
 				Type:        graphql.NewList(types.CharacterType),
 				Description: "Get Character List",
 				// Resolve: ,

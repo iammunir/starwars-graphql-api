@@ -7,14 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *repository) GetSpeciesList(ctx context.Context, selectQuery string) ([]entity.Species, error) {
+func (r *repository) GetSpeciesList(ctx context.Context, selectQuery string) ([]*entity.Species, error) {
 	r.log.Trace("Enter: repository GetSpeciesList")
 
 	if ctx.Err() == context.DeadlineExceeded {
 		return nil, ctx.Err()
 	}
 
-	var speciesList []entity.Species
+	var speciesList []*entity.Species
 	errDb := r.db.
 		Select(selectQuery).
 		Model(&entity.Species{}).
@@ -22,7 +22,7 @@ func (r *repository) GetSpeciesList(ctx context.Context, selectQuery string) ([]
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting species list")
+		r.log.Error("database error when getting species list")
 		return nil, errDb
 	}
 
@@ -50,21 +50,21 @@ func (r *repository) GetSpeciesById(ctx context.Context, speciesId int, selectQu
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting species data")
+		r.log.Error("database error when getting species data")
 		return nil, errDb
 	}
 
 	return &species, nil
 }
 
-func (r *repository) GetSpeciesByPlanetIds(ctx context.Context, planetIds []int, selectQuery string) ([]entity.Species, error) {
+func (r *repository) GetSpeciesByPlanetIds(ctx context.Context, planetIds []int, selectQuery string) ([]*entity.Species, error) {
 	r.log.Trace("Enter: repository GetSpeciesByPlanetIds")
 
 	if ctx.Err() == context.DeadlineExceeded {
 		return nil, ctx.Err()
 	}
 
-	var speciesList []entity.Species
+	var speciesList []*entity.Species
 	errDb := r.db.
 		Select(selectQuery).
 		Model(&entity.Species{}).
@@ -73,7 +73,7 @@ func (r *repository) GetSpeciesByPlanetIds(ctx context.Context, planetIds []int,
 		Error
 
 	if errDb != nil {
-		r.log.WithError(errDb).Error("database error when getting species list by planet ids")
+		r.log.Error("database error when getting species list by planet ids")
 		return nil, errDb
 	}
 

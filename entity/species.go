@@ -11,5 +11,5 @@ type Species struct {
 	EyeColors       string `json:"eyeColors" gorm:"column:eye_colors"`
 	AverageLifespan int32  `json:"averageLifespan" gorm:"column:average_lifespan"`
 	Language        string `json:"language" gorm:"column:language"`
-	HomeworldId     int    `json:"homeworldId" gorm:"column:homeworld_id"`
+	HomeworldId     int    `json:"homeworld" gorm:"column:homeworld_id"`
 }
