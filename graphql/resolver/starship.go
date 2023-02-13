@@ -10,9 +10,9 @@ import (
 	"github.com/iammunir/starwars-graphql-api/repository"
 )
 
-var PlanetResolver = func(p graphql.ResolveParams) (interface{}, error) {
+var StarshipResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	log := p.Context.Value(constant.LoggerKey).(logger.Logger)
-	log.Trace("Enter: PlanetResolver")
+	log.Trace("Enter: StarshipResolver")
 
 	rootValue := p.Info.RootValue.(map[string]interface{})
 	fieldName := p.Info.FieldName
@@ -22,7 +22,7 @@ var PlanetResolver = func(p graphql.ResolveParams) (interface{}, error) {
 
 	id, ok := p.Args["id"].(int)
 	if !ok {
-		log.Error("error casting cifno value")
+		log.Error("error casting id value")
 		return nil, constant.ErrCastingValue
 	}
 
@@ -30,19 +30,19 @@ var PlanetResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	if err != nil {
 		log.Debug(fmt.Sprintf("error getting selected fields: %s", err.Error()))
 	}
-	selectQuery := GetColumnListFromAttributes(entity.Planet{}, selectedFields)
+	selectQuery := GetColumnListFromAttributes(entity.Starship{}, selectedFields)
 
-	result, err := repo.GetPlanetById(p.Context, id, selectQuery)
+	result, err := repo.GetStarshipById(p.Context, id, selectQuery)
 	if err != nil {
-		log.Error("error getting planet by id")
+		log.Error("error getting starship by id")
 	}
 
 	return result, err
 }
 
-var PlanetListResolver = func(p graphql.ResolveParams) (interface{}, error) {
+var StarshipListResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	log := p.Context.Value(constant.LoggerKey).(logger.Logger)
-	log.Trace("Enter: PlanetListResolver")
+	log.Trace("Enter: StarshipListResolver")
 
 	rootValue := p.Info.RootValue.(map[string]interface{})
 	fieldName := p.Info.FieldName
@@ -54,11 +54,11 @@ var PlanetListResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	if err != nil {
 		log.Debug(fmt.Sprintf("error getting selected fields: %s", err.Error()))
 	}
-	selectQuery := GetColumnListFromAttributes(entity.Planet{}, selectedFields)
+	selectQuery := GetColumnListFromAttributes(entity.Starship{}, selectedFields)
 
-	result, err := repo.GetPlanetList(p.Context, selectQuery)
+	result, err := repo.GetStarshipList(p.Context, selectQuery)
 	if err != nil {
-		log.Error("error getting planet by id")
+		log.Error("error getting starship by id")
 	}
 
 	return result, err

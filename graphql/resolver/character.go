@@ -11,9 +11,9 @@ import (
 	"github.com/iammunir/starwars-graphql-api/repository"
 )
 
-var SpeciesResolver = func(p graphql.ResolveParams) (interface{}, error) {
+var CharacterResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	log := p.Context.Value(constant.LoggerKey).(logger.Logger)
-	log.Trace("Enter: SpeciesResolver")
+	log.Trace("Enter: CharacterResolver")
 
 	rootValue := p.Info.RootValue.(map[string]interface{})
 	fieldName := p.Info.FieldName
@@ -31,20 +31,19 @@ var SpeciesResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	if err != nil {
 		log.Debug(fmt.Sprintf("error getting selected fields: %s", err.Error()))
 	}
-	selectedFields = append(selectedFields, "id") // id must be included in selected fields to avoid error
-	selectQuery := GetColumnListFromAttributes(entity.Species{}, selectedFields)
+	selectQuery := GetColumnListFromAttributes(entity.Character{}, selectedFields)
 
-	result, err := repo.GetSpeciesById(p.Context, id, selectQuery)
+	result, err := repo.GetCharacterById(p.Context, id, selectQuery)
 	if err != nil {
-		log.Error("error getting species by id")
+		log.Error("error getting character by id")
 	}
 
 	return result, err
 }
 
-var SpeciesListResolver = func(p graphql.ResolveParams) (interface{}, error) {
+var CharacterListResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	log := p.Context.Value(constant.LoggerKey).(logger.Logger)
-	log.Trace("Enter: SpeciesListResolver")
+	log.Trace("Enter: CharacterListResolver")
 
 	rootValue := p.Info.RootValue.(map[string]interface{})
 	fieldName := p.Info.FieldName
@@ -56,24 +55,23 @@ var SpeciesListResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	if err != nil {
 		log.Debug(fmt.Sprintf("error getting selected fields: %s", err.Error()))
 	}
-	selectedFields = append(selectedFields, "id") // id must be included in selected fields to avoid error
-	selectQuery := GetColumnListFromAttributes(entity.Species{}, selectedFields)
+	selectQuery := GetColumnListFromAttributes(entity.Character{}, selectedFields)
 
-	result, err := repo.GetSpeciesList(p.Context, selectQuery)
+	result, err := repo.GetCharacterList(p.Context, selectQuery)
 	if err != nil {
-		log.Error("error getting species by id")
+		log.Error("error getting character by id")
 	}
 
 	return result, err
 }
 
-var SpeciesPlanetResolver = func(p graphql.ResolveParams) (interface{}, error) {
+var CharacterPlanetResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	log := p.Context.Value(constant.LoggerKey).(logger.Logger)
-	log.Trace("Enter: SpeciesPlanetResolver")
+	log.Trace("Enter: CharacterPlanetResolver")
 
-	species, ok := p.Source.(*entity.Species)
+	character, ok := p.Source.(*entity.Character)
 	if !ok {
-		return nil, fmt.Errorf("error getting species parent value")
+		return nil, fmt.Errorf("error getting character parent value")
 	}
 
 	selectedFields, err := getSelectedFields(p)
@@ -86,7 +84,7 @@ var SpeciesPlanetResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	loaders := p.Context.Value(constant.LoaderKey).(map[string]*dataloader.Loader)
 	planetLoader := loaders[constant.PlanetLoaderKey]
 
-	key := NewResolverKey(fmt.Sprintf("%d", species.HomeworldId), selectQuery)
+	key := NewResolverKey(fmt.Sprintf("%d", character.HomeworldId), selectQuery)
 
 	ch := make(chan resultLoader, 1)
 	go func() {
@@ -111,37 +109,36 @@ var SpeciesPlanetResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	}, nil
 }
 
-var SpeciesCharacterResolver = func(p graphql.ResolveParams) (interface{}, error) {
+var CharacterSpeciesResolver = func(p graphql.ResolveParams) (interface{}, error) {
 	log := p.Context.Value(constant.LoggerKey).(logger.Logger)
-	log.Trace("Enter: SpeciesCharacterResolver")
+	log.Trace("Enter: CharacterSpeciesResolver")
 
-	species, ok := p.Source.(*entity.Species)
+	character, ok := p.Source.(*entity.Character)
 	if !ok {
-		return nil, fmt.Errorf("error getting species parent value")
+		return nil, fmt.Errorf("error getting character parent value")
 	}
 
 	selectedFields, err := getSelectedFields(p)
 	if err != nil {
 		log.Debug(fmt.Sprintf("error getting selected fields: %s", err.Error()))
 	}
-	selectedFields = append(selectedFields, "id")      // id must be included in selected fields to avoid error
-	selectedFields = append(selectedFields, "species") // species must be included in selected fields to avoid error
-	selectQuery := GetColumnListFromAttributes(entity.Character{}, selectedFields)
+	selectedFields = append(selectedFields, "id") // id must be included in selected fields to avoid error
+	selectQuery := GetColumnListFromAttributes(entity.Species{}, selectedFields)
 
 	loaders := p.Context.Value(constant.LoaderKey).(map[string]*dataloader.Loader)
-	characterBySpeciesLoader := loaders[constant.CharacterBySpeciesLoaderKey]
+	speciesLoader := loaders[constant.SpeciesLoaderKey]
 
-	key := NewResolverKey(fmt.Sprintf("%d", species.Id), selectQuery)
+	key := NewResolverKey(fmt.Sprintf("%d", character.SpeciesId), selectQuery)
 
 	ch := make(chan resultLoader, 1)
 	go func() {
-		loaderResult, err := characterBySpeciesLoader.Load(p.Context, key)()
+		loaderResult, err := speciesLoader.Load(p.Context, key)()
 		if err != nil {
 			ch <- resultLoader{err: err}
 		}
-		characters := loaderResult.([]*entity.Character)
+		species := loaderResult.(*entity.Species)
 		ch <- resultLoader{
-			data: characters,
+			data: species,
 			err:  nil,
 		}
 		close(ch)

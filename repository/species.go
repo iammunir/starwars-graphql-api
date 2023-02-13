@@ -83,3 +83,30 @@ func (r *repository) GetSpeciesByPlanetIds(ctx context.Context, planetIds []int,
 
 	return speciesList, nil
 }
+
+func (r *repository) GetSpeciesListByIds(ctx context.Context, speciesIds []int, selectQuery string) ([]*entity.Species, error) {
+	r.log.Trace("Enter: repository GetSpeciesListByIds")
+
+	if ctx.Err() == context.DeadlineExceeded {
+		return nil, ctx.Err()
+	}
+
+	var speciesList []*entity.Species
+	errDb := r.db.
+		Select(selectQuery).
+		Model(&entity.Species{}).
+		Where("id IN (?)", speciesIds).
+		Scan(&speciesList).
+		Error
+
+	if errDb != nil {
+		r.log.Error("database error when getting species data")
+		return nil, errDb
+	}
+
+	if len(speciesList) == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	return speciesList, nil
+}

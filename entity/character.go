@@ -10,6 +10,6 @@ type Character struct {
 	EyeColor    string `json:"eyeColor" gorm:"column:eye_color"`
 	BirthYear   string `json:"birthYear" gorm:"column:birth_year"`
 	Gender      string `json:"gender" gorm:"column:gender"`
-	HomeworldId int    `json:"-" gorm:"column:homeworld_id"`
-	SpeciesId   int    `json:"-" gorm:"column:species_id"`
+	HomeworldId int    `json:"homeworld" gorm:"column:homeworld_id"`
+	SpeciesId   int    `json:"species" gorm:"column:species_id"`
 }

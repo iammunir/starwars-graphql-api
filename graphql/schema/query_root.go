@@ -23,7 +23,7 @@ var RootQuery = graphql.NewObject(
 			"vehicles": &graphql.Field{
 				Type:        graphql.NewList(types.VehicleType),
 				Description: "Get Vehicle List",
-				// Resolve: ,
+				Resolve:     resolver.VehicleListResolver,
 			},
 			"starship": &graphql.Field{
 				Type:        types.StarshipType,
@@ -33,12 +33,12 @@ var RootQuery = graphql.NewObject(
 						Type: graphql.NewNonNull(graphql.Int),
 					},
 				},
-				// Resolve: ,
+				Resolve: resolver.StarshipResolver,
 			},
 			"starships": &graphql.Field{
 				Type:        graphql.NewList(types.StarshipType),
 				Description: "Get Starship List",
-				// Resolve: ,
+				Resolve:     resolver.StarshipListResolver,
 			},
 			"species": &graphql.Field{
 				Type:        types.SpeciesType,
@@ -78,12 +78,12 @@ var RootQuery = graphql.NewObject(
 						Type: graphql.NewNonNull(graphql.Int),
 					},
 				},
-				// Resolve: ,
+				Resolve: resolver.CharacterResolver,
 			},
 			"characters": &graphql.Field{
 				Type:        graphql.NewList(types.CharacterType),
 				Description: "Get Character List",
-				// Resolve: ,
+				Resolve:     resolver.CharacterListResolver,
 			},
 		},
 	},

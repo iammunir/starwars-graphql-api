@@ -39,3 +39,27 @@ var VehicleResolver = func(p graphql.ResolveParams) (interface{}, error) {
 
 	return result, err
 }
+
+var VehicleListResolver = func(p graphql.ResolveParams) (interface{}, error) {
+	log := p.Context.Value(constant.LoggerKey).(logger.Logger)
+	log.Trace("Enter: VehicleListResolver")
+
+	rootValue := p.Info.RootValue.(map[string]interface{})
+	fieldName := p.Info.FieldName
+	rootValue[constant.QUERY_NAME] = fieldName
+
+	repo := p.Context.Value(constant.RepositoryKey).(repository.Repository)
+
+	selectedFields, err := getSelectedFields(p)
+	if err != nil {
+		log.Debug(fmt.Sprintf("error getting selected fields: %s", err.Error()))
+	}
+	selectQuery := GetColumnListFromAttributes(entity.Vehicle{}, selectedFields)
+
+	result, err := repo.GetVehicleList(p.Context, selectQuery)
+	if err != nil {
+		log.Error("error getting vehicle by id")
+	}
+
+	return result, err
+}

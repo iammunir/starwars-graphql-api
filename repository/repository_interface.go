@@ -21,10 +21,12 @@ type Repository interface {
 
 	GetSpeciesList(ctx context.Context, selectQuery string) ([]*entity.Species, error)
 	GetSpeciesById(ctx context.Context, speciesId int, selectQuery string) (*entity.Species, error)
+	GetSpeciesListByIds(ctx context.Context, speciesIds []int, selectQuery string) ([]*entity.Species, error)
 	GetSpeciesByPlanetIds(ctx context.Context, planetIds []int, selectQuery string) ([]*entity.Species, error)
 
 	GetCharacterList(ctx context.Context, selectQuery string) ([]*entity.Character, error)
 	GetCharacterById(ctx context.Context, characterId int, selectQuery string) (*entity.Character, error)
+	GetCharacterListByIds(ctx context.Context, characterIds []int, selectQuery string) ([]*entity.Character, error)
 	GetCharacterListByPlanetIds(ctx context.Context, planetIds []int, selectQuery string) ([]*entity.Character, error)
 	GetCharacterListBySpeciesIds(ctx context.Context, speciesIds []int, selectQuery string) ([]*entity.Character, error)
 }

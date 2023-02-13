@@ -27,6 +27,19 @@ func init() {
 		Type:    types.PlanetType,
 		Resolve: resolver.SpeciesPlanetResolver,
 	})
+	types.SpeciesType.AddFieldConfig("characters", &graphql.Field{
+		Type:    graphql.NewList(types.CharacterType),
+		Resolve: resolver.SpeciesCharacterResolver,
+	})
+
+	types.CharacterType.AddFieldConfig("homeworld", &graphql.Field{
+		Type:    types.PlanetType,
+		Resolve: resolver.CharacterPlanetResolver,
+	})
+	types.CharacterType.AddFieldConfig("species", &graphql.Field{
+		Type:    types.SpeciesType,
+		Resolve: resolver.CharacterSpeciesResolver,
+	})
 }
 
 func InitApp(dbConn *gorm.DB, log logger.Logger) *http.ServeMux {

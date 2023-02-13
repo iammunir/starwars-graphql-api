@@ -17,9 +17,15 @@ func Dataloader(repo repository.Repository) func(http.Handler) http.Handler {
 			ctx := r.Context()
 
 			planetDataloader := loader.NewPlanetDataloader(repo)
+			characterDataloader := loader.NewCharacterDataloader(repo)
+			characterBySpeciesDataloader := loader.NewCharacterBySpeciesDataloader(repo)
+			speciesDataloader := loader.NewSpeciesDataloader(repo)
 
-			var loaders = make(map[string]*dataloader.Loader, 1) // make sure size matches with quantity of loaders
+			var loaders = make(map[string]*dataloader.Loader, 4) // make sure size matches with quantity of loaders
 			loaders[constant.PlanetLoaderKey] = planetDataloader
+			loaders[constant.CharacterLoaderKey] = characterDataloader
+			loaders[constant.CharacterBySpeciesLoaderKey] = characterBySpeciesDataloader
+			loaders[constant.SpeciesLoaderKey] = speciesDataloader
 
 			augmentedCtx := context.WithValue(ctx, constant.LoaderKey, loaders)
 			r = r.WithContext(augmentedCtx)

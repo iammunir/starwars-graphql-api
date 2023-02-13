@@ -57,6 +57,33 @@ func (r *repository) GetCharacterById(ctx context.Context, characterId int, sele
 	return &character, nil
 }
 
+func (r *repository) GetCharacterListByIds(ctx context.Context, characterIds []int, selectQuery string) ([]*entity.Character, error) {
+	r.log.Trace("Enter: repository GetCharacterListByIds")
+
+	if ctx.Err() == context.DeadlineExceeded {
+		return nil, ctx.Err()
+	}
+
+	var characterList []*entity.Character
+	errDb := r.db.
+		Select(selectQuery).
+		Model(&entity.Character{}).
+		Where("id IN (?)", characterIds).
+		Scan(&characterList).
+		Error
+
+	if errDb != nil {
+		r.log.Error("database error when getting character data")
+		return nil, errDb
+	}
+
+	if len(characterList) == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	return characterList, nil
+}
+
 func (r *repository) GetCharacterListByPlanetIds(ctx context.Context, planetIds []int, selectQuery string) ([]*entity.Character, error) {
 	r.log.Trace("Enter: repository GetCharacterListByPlanetIds")
 
